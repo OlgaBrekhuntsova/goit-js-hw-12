@@ -1,0 +1,16 @@
+.header {
+  padding: 20px 0;
+}
+.nav-aligner {
+  width: 100px;
+}
+.nav {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.nav-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

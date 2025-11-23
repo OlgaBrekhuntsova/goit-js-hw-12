@@ -1,0 +1,9 @@
+.iziToast-body {
+  max-width: 432px;
+  font-family: Montserrat;
+}
+
+.iziToast button.iziToast-close {
+  background-image: url('../img/bi_x-lg.svg');
+  background-size: 40%;
+}
