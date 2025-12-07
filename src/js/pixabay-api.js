@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { alertToast } from '../main';
+
+export const PAGE_SIZE = 15;
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 
 const params = {
@@ -7,11 +9,12 @@ const params = {
   image_type: 'photo',
   orientation: 'horizontal',
   safesearch: true,
-  per_page: 18,
+  per_page: PAGE_SIZE,
   q: '',
 };
-export function getImagesByQuery(query) {
+export function getImagesByQuery(query, page) {
   params.q = query;
+  params.page = page;
   return axios
     .get('', { params })
     .then(res => res.data)

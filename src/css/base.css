@@ -31,3 +31,24 @@ main {
 main:has(.back-link) {
   text-align: center;
 }
+
+button {
+  width: 125px;
+  height: 40px;
+  border-radius: 8px;
+  padding: 8px 16px;
+  background-color: #4e75ff;
+  color: #ffffff;
+  border: 0;
+  font-family: Montserrat;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 15px;
+  line-height: inherit;
+  letter-spacing: inherit;
+}
+
+button:hover {
+  background-color: #6c8cff;
+  transition: background-color 0.2s ease;
+}

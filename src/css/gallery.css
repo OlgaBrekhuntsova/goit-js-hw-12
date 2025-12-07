@@ -6,12 +6,13 @@
   list-style: none;
   padding: 0px;
   color: #2e2f42;
+  padding-bottom: 20px;
 }
 
 .gallery-item {
   display: block;
   max-height: 200px;
-  flex: 1 1 calc(33.333% - 24px);
+  flex: 0 0 calc(33.333% - 24px);
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
@@ -78,4 +79,8 @@
   width: 24px;
   height: 24px;
   font-size: 2.5rem;
+}
+
+.gallery-controlls {
+  padding-bottom: 20px;
 }

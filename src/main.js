@@ -1,4 +1,4 @@
-import { getImagesByQuery } from './js/pixabay-api';
+import { getImagesByQuery, PAGE_SIZE } from './js/pixabay-api';
 import errorIcon from './img/x-octagon.svg';
 
 import {
@@ -6,41 +6,78 @@ import {
   createGallery,
   showLoader,
   hideLoader,
+  hideLoadMoreButton,
+  showLoadMoreButton,
 } from './js/render-functions';
 import iziToast from 'izitoast';
 
+let page = 1;
+let pages = 0;
+let query = '';
 const refs = {
   formEle: document.querySelector('.form'),
+  loadMoreBtn: document.querySelector('.js-loadMore-btn'),
 };
 
 refs.formEle.addEventListener('submit', e => {
   e.preventDefault();
   clearGallery();
 
-  const query = refs.formEle.elements['search-text'].value.trim();
+  query = refs.formEle.elements['search-text'].value.trim();
   if (!query) {
     alertToast.show('noSearchParams');
     return;
   }
   showLoader();
-  getImagesByQuery(query)
+  page = 1;
+  getImagesByQuery(query, page)
     .then(data => {
       try {
         data.total;
       } catch {
+        pages = 0;
         alertToast.show('notExpected');
         return;
       }
       if (!data.total) {
+        pages = 0;
         alertToast.show('notFound');
       } else {
+        pages = Math.ceil(data.totalHits / PAGE_SIZE);
         createGallery(data.hits);
       }
     })
     .finally(() => {
       hideLoader();
+      updateLoadMoreStatus();
     });
   refs.formEle.reset();
+});
+
+refs.loadMoreBtn.addEventListener('click', () => {
+  page += 1;
+  showLoader();
+  getImagesByQuery(query, page)
+    .then(data => {
+      try {
+        data.total;
+      } catch {
+        pages = 0;
+        alertToast.show('notExpected');
+        return;
+      }
+      if (!data.total) {
+        pages = 0;
+        alertToast.show('notFound');
+      } else {
+        createGallery(data.hits);
+        scrollAfterRender();
+      }
+    })
+    .finally(() => {
+      hideLoader();
+      updateLoadMoreStatus();
+    });
 });
 
 refs.formEle.addEventListener('click', e => {
@@ -77,3 +114,65 @@ export const alertToast = {
     } catch {}
   },
 };
+
+export const infoToast = {
+  message: {
+    lastPage: "We're sorry, but you've reached the end of search results.",
+  },
+  show(messageKey) {
+    const message = this.message[messageKey]
+      ? this.message[messageKey]
+      : messageKey;
+
+    iziToast.info({
+      message: message,
+      position: 'topRight',
+      timeout: 10000,
+      closeOnClick: true,
+    });
+  },
+  close() {
+    try {
+      iziToast.hide({}, document.querySelector('.iziToast'));
+    } catch {}
+  },
+};
+
+function updateLoadMoreStatus() {
+  if (page < pages) {
+    showLoadMoreButton();
+  } else {
+    hideLoadMoreButton();
+    page === pages && infoToast.show('lastPage');
+  }
+}
+
+function scrollAfterRender() {
+  const galleryItem = document.querySelector('.gallery-item');
+  if (!galleryItem) return;
+
+  const cardHeight = galleryItem.getBoundingClientRect().height;
+  animatedScroll(cardHeight * 2, 800);
+}
+
+function animatedScroll(distance, duration = 800) {
+  const startY = window.scrollY;
+  const startTime = performance.now();
+
+  function easeOutQuad(t) {
+    return t * (2 - t);
+  }
+
+  function animate(time) {
+    const elapsed = time - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const offset = easeOutQuad(progress);
+    window.scrollTo(0, startY + distance * offset);
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+  }
+
+  requestAnimationFrame(animate);
+}

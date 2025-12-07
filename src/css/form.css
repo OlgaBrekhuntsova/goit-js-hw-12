@@ -43,21 +43,4 @@ label input:focus-visible {
 
 .form button {
   width: 91px;
-  height: 40px;
-  border-radius: 8px;
-  padding: 8px 16px;
-  background-color: #4e75ff;
-  color: #ffffff;
-  border: 0;
-  font-family: inherit;
-  font-weight: 500;
-  font-style: Medium;
-  font-size: 15px;
-  line-height: inherit;
-  letter-spacing: inherit;
-}
-
-.form button:hover {
-  background-color: #6c8cff;
-  transition: background-color 0.2s ease;
 }

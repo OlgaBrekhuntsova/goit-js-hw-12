@@ -1,8 +1,9 @@
 import SimpleLightbox from 'simplelightbox';
 
-const refs = {
+export const refs = {
   gallery: document.querySelector('.gallery'),
   loader: document.querySelector('.js-loader'),
+  loadMoreBtn: document.querySelector('.js-loadMore-btn'),
 };
 
 const gallerySL = new SimpleLightbox('.gallery a', {
@@ -54,6 +55,13 @@ function galleryCards(images) {
 
 export function createGallery(images) {
   const galleryMarkup = galleryCards(images);
-  refs.gallery.innerHTML = galleryMarkup;
+  refs.gallery.insertAdjacentHTML('beforeend', galleryMarkup);
   gallerySL.refresh();
+}
+
+export function showLoadMoreButton() {
+  refs.loadMoreBtn.removeAttribute('hidden');
+}
+export function hideLoadMoreButton() {
+  refs.loadMoreBtn.setAttribute('hidden', '');
 }
