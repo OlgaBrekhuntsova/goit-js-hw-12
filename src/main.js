@@ -19,7 +19,7 @@ const refs = {
   loadMoreBtn: document.querySelector('.js-loadMore-btn'),
 };
 
-refs.formEle.addEventListener('submit', e => {
+refs.formEle.addEventListener('submit', async e => {
   e.preventDefault();
   clearGallery();
 
@@ -30,54 +30,44 @@ refs.formEle.addEventListener('submit', e => {
   }
   showLoader();
   page = 1;
-  getImagesByQuery(query, page)
-    .then(data => {
-      try {
-        data.total;
-      } catch {
-        pages = 0;
-        alertToast.show('notExpected');
-        return;
-      }
-      if (!data.total) {
-        pages = 0;
-        alertToast.show('notFound');
-      } else {
-        pages = Math.ceil(data.totalHits / PAGE_SIZE);
-        createGallery(data.hits);
-      }
-    })
-    .finally(() => {
-      hideLoader();
-      updateLoadMoreStatus();
-    });
+  const data = await getImagesByQuery(query, page);
+  const total = data?.total ?? null;
+  if (total === null) {
+    pages = 0;
+    alertToast.show('notExpected');
+  } else {
+    if (total === 0) {
+      pages = 0;
+      alertToast.show('notFound');
+    } else {
+      pages = Math.ceil(data.totalHits / PAGE_SIZE);
+      createGallery(data.hits);
+    }
+  }
+  hideLoader();
+  updateLoadMoreStatus();
   refs.formEle.reset();
 });
 
-refs.loadMoreBtn.addEventListener('click', () => {
+refs.loadMoreBtn.addEventListener('click', async () => {
   page += 1;
   showLoader();
-  getImagesByQuery(query, page)
-    .then(data => {
-      try {
-        data.total;
-      } catch {
-        pages = 0;
-        alertToast.show('notExpected');
-        return;
-      }
-      if (!data.total) {
-        pages = 0;
-        alertToast.show('notFound');
-      } else {
-        createGallery(data.hits);
-        scrollAfterRender();
-      }
-    })
-    .finally(() => {
-      hideLoader();
-      updateLoadMoreStatus();
-    });
+  const data = await getImagesByQuery(query, page);
+  const total = data?.total ?? null;
+  if (total === null) {
+    pages = 0;
+    alertToast.show('notExpected');
+  } else {
+    if (total === 0) {
+      pages = 0;
+      alertToast.show('notFound');
+    } else {
+      createGallery(data.hits);
+      scrollAfterRender();
+    }
+  }
+  hideLoader();
+  updateLoadMoreStatus();
 });
 
 refs.formEle.addEventListener('click', e => {

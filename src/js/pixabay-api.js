@@ -12,11 +12,13 @@ const params = {
   per_page: PAGE_SIZE,
   q: '',
 };
-export function getImagesByQuery(query, page) {
+export async function getImagesByQuery(query, page) {
   params.q = query;
   params.page = page;
-  return axios
-    .get('', { params })
-    .then(res => res.data)
-    .catch(e => alertToast.show(e.message));
+  try {
+    const res = await axios.get('', { params });
+    return res.data;
+  } catch (error) {
+    alertToast.show(error.message);
+  }
 }
